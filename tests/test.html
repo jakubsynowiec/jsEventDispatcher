@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="../src/namespace.js"></script>
+    <script type="text/javascript" src="../src/jsEventDispatcher/Event.js"></script>
+    <script type="text/javascript" src="../src/jsEventDispatcher/EventDispatcher.js"></script>
+    <script type="text/javascript">
+        var dispatcher = new jsEventDispatcher.EventDispatcher(window);
+
+        dispatcher.addEventListener('say', function (event) {
+            console.log('A', event.getTimestamp());
+        });
+
+        var testObject = function () {
+            this.someVar = 1;
+            this.dispatcher = new jsEventDispatcher.EventDispatcher(this, dispatcher);
+        };
+
+        var test = new testObject();
+
+        test.dispatcher.addEventListener('say', function (event) {
+            console.log('B', event.getTimestamp());
+        });
+
+        test.dispatcher.dispatchEvent(new jsEventDispatcher.Event('say', window, true));
+    </script>
+</head>
+<body>
+
+</body>
+</html>

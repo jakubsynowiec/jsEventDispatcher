@@ -1,0 +1,65 @@
+<project name="jsEventDispatcher" default="dist" basedir=".">
+    <description>JavaScript EventDispatcher</description>
+
+    <property name="src" location="src"/>
+    <property name="build" location="build"/>
+    <property name="dist" location="dist"/>
+
+    <property file="build.prop"/>
+
+    <taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask"
+             classpath="${jscomp.classpath}"/>
+
+    <target name="init">
+        <tstamp>
+            <format property="touch.time" pattern="yyyyMMddHHmmss" />
+        </tstamp>
+        <mkdir dir="${build}"/>
+    </target>
+
+    <target name="build" depends="init" description="">
+        <concat destfile="${build}/jsEventDispatcher-${touch.time}.js" encoding="UTF-8" outputencoding="UTF-8" fixlastline="yes">
+            <fileset dir="${src}" casesensitive="yes">
+                <include name="namespace.js"/>
+            </fileset>
+
+            <fileset dir="${src}" casesensitive="yes">
+                <exclude name="namespace.js"/>
+                <include name="**/*.js"/>
+            </fileset>
+        </concat>
+    </target>
+
+    <target name="compile" depends="build" description="">
+        <propertyfile file="build.prop" comment="Build Information File - DO NOT CHANGE">
+            <entry key="version.build" type="int" default="1" operation="+" />
+        </propertyfile>
+
+        <jscomp compilationLevel="whitespace" warning="verbose"
+                debug="false" output="${build}/jsEventDispatcher-${version.major}.${version.minor}.${version.build}.js">
+
+          <sources dir="${build}">
+            <file name="jsEventDispatcher-${touch.time}.js"/>
+          </sources>
+
+        </jscomp>
+    </target>
+
+    <target name="dist" depends="compile" description="">
+        <mkdir dir="${dist}"/>
+
+        <jscomp compilationLevel="simple" warning="verbose"
+                debug="false" output="${dist}/jsEventDispatcher-${version.major}.${version.minor}.${version.build}.js">
+
+          <sources dir="${build}">
+            <file name="jsEventDispatcher-${version.major}.${version.minor}.${version.build}.js"/>
+          </sources>
+
+        </jscomp>
+    </target>
+
+    <target name="clean" description="clean up">
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+    </target>
+</project>

@@ -1,0 +1,6 @@
+#Build Information File - DO NOT CHANGE
+#Fri, 08 May 2012 14:10:00 +0200
+version.major=0
+version.minor=0
+version.build=2
+jscomp.classpath=closure-compiler.jar
