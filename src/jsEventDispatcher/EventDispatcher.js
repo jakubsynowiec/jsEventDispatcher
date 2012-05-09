@@ -14,6 +14,12 @@
          * @private
          */
         var _currentTarget = (currentTarget) ? currentTarget : null;
+        
+        /**
+         * @type {jsEventDispatcher.Event[]}
+         * @private
+         */
+        var _deferedEvents = [];
 
         /**
          * @type {Object}
@@ -44,6 +50,21 @@
             } else {
                 throw new Error("Listener is not a function.");
             }
+        };
+        
+        /**
+         * Dispatch an event after a given time.
+         *
+         * @param {Number} iMillis - Time after an event will be dispatched. In milliseconds.
+         * @param {jsEventDispatcher.Event} event - The Event object that is dispatched into the event flow.
+         */
+        this.deferEventDispatch = function (iMillis, event) {
+            var that = this;
+            var index = _deferedEvents.length;
+            _deferedEvents.push(setTimeout(function () {
+                that.dispatchEvent(event);
+                _deferedEvents.slice(index, 1);
+            }, iMillis));
         };
 
         /**
