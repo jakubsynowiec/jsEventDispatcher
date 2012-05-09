@@ -53,12 +53,26 @@
         };
         
         /**
+         * Cancels all scheduled events.
+         */
+        this.cancelDeferredEvents = function () {
+            var deItr,
+                deCount;
+
+            for (deItr = 0, deCount = _deferedEvents.length; deItr < deCount; ++deItr) {
+                clearTimeout(_deferedEvents[deItr]);
+            }
+
+            _deferedEvents = [];
+        };
+        
+        /**
          * Dispatch an event after a given time.
          *
-         * @param {Number} iMillis - Time after an event will be dispatched. In milliseconds.
          * @param {jsEventDispatcher.Event} event - The Event object that is dispatched into the event flow.
+         * @param {Number} iMillis - Time after an event will be dispatched. In milliseconds.
          */
-        this.deferEventDispatch = function (iMillis, event) {
+        this.deferEventDispatch = function (event, iMillis) {
             var that = this;
             var index = _deferedEvents.length;
             _deferedEvents.push(setTimeout(function () {

@@ -10,7 +10,7 @@
         var dispatcher = new jsEventDispatcher.EventDispatcher(window);
 
         dispatcher.addEventListener('say', function (event) {
-            console.log('A', event.getTimestamp());
+            console.log(new Date().getTime(), 'A', event.getTimestamp());
         });
 
         var testObject = function () {
@@ -21,8 +21,10 @@
         var test = new testObject();
 
         test.dispatcher.addEventListener('say', function (event) {
-            console.log('B', event.getTimestamp());
+            console.log(new Date().getTime(), 'B', event.getTimestamp());
         });
+        
+        test.dispatcher.deferEventDispatch(new jsEventDispatcher.Event('say', window), 4000);
 
         test.dispatcher.dispatchEvent(new jsEventDispatcher.Event('say', window, true));
     </script>
