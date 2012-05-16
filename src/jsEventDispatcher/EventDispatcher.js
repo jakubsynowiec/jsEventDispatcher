@@ -95,18 +95,14 @@
                     listeners = _listeners[event.getType()],
                     listener;
 
-                for (lItr = 0, lCount = listeners.length; lItr < lCount; ++lItr) {
-                    if (event.canPropagate() === false) {
-                        break;
-                    }
-                    
+                for (lItr = 0, lCount = listeners.length; lItr < lCount; ++lItr) {                    
                     listener = listeners[lItr];
                     listener(event);
                 }
             }
 
-            if (_target !== null && event.getBubbles() === true) {
-                eventTarget.dispatchEvent(event);
+            if (_target !== null && event.getBubbles() === true && event.canPropagate() === true) {
+                _target.dispatchEvent(event);
             }
         };
 
