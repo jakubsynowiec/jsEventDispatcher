@@ -1,4 +1,4 @@
 /**
  * @namespace
  */
-var jsEventDispatcher = window.jsEventDispatcher = {};
+var jsEventDispatcher = jsEventDispatcher || {};

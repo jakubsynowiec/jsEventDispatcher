@@ -59,7 +59,7 @@
          * @type {String}
          * @private
          */
-        var _type = type;
+        var _type = type || jsEventDispatcher.Event.EVENT;
 
         /**
          * The time (in milliseconds since the epoch) when
@@ -204,6 +204,8 @@
             _setFlag(STOP_PROPAGATION);
         };
     };
+    
+    jsEventDispatcher.Event.EVENT = "EVENT";
 
     /**
      * @type {Number}

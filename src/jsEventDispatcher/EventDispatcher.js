@@ -1,4 +1,5 @@
 (function () {
+    "use strict";
 
     /**
      * Aggregates an instance of the EventDispatcher class.
@@ -9,11 +10,18 @@
      * @constructor
      */
     jsEventDispatcher.EventDispatcher = function (currentTarget, eventTarget) {
+        
         /**
          * @type {Object}
          * @private
          */
         var _currentTarget = (currentTarget) ? currentTarget : null;
+        
+        /**
+         * @type {Object}
+         * @private
+         */
+        var _queuedEvents = {};
         
         /**
          * @type {jsEventDispatcher.Event[]}
@@ -56,29 +64,41 @@
          * Cancels all scheduled events.
          */
         this.cancelDeferredEvents = function () {
-            var deItr,
-                deCount;
+            /**
+             * @type {Number}
+             */
+            var deferedEvent;
 
-            for (deItr = 0, deCount = _deferedEvents.length; deItr < deCount; ++deItr) {
-                clearTimeout(_deferedEvents[deItr]);
+            while ((deferedEvent = _deferedEvents.pop())) {
+                clearTimeout(deferedEvent);
             }
-
-            _deferedEvents = [];
+        };
+        
+        /**
+         * Cancels all queued events.
+         */
+        this.cancelQueuedEvents = function () {
+            for (var evtName in _queuedEvents) {
+                if (_queuedEvents.hasOwnProperty(evtName)) {
+                    delete _queuedEvents[evtName];
+                }
+            }
         };
         
         /**
          * Dispatch an event after a given time.
          *
          * @param {jsEventDispatcher.Event} event - The Event object that is dispatched into the event flow.
-         * @param {Number} iMillis - Time after an event will be dispatched. In milliseconds.
+         * @param {Number=} iMillis (default = 1000) - Time after an event will be dispatched. In milliseconds.
          */
         this.deferEventDispatch = function (event, iMillis) {
-            var that = this;
+            var self = this;
             var index = _deferedEvents.length;
+            
             _deferedEvents.push(setTimeout(function () {
-                that.dispatchEvent(event);
+                self.dispatchEvent(event);
                 _deferedEvents.slice(index, 1);
-            }, iMillis));
+            }, iMillis || 1000));
         };
 
         /**
@@ -100,9 +120,38 @@
                     listener(event);
                 }
             }
+            
+            this._dispatchQueuedEvents(event.getType());
 
             if (_target !== null && event.getBubbles() === true && event.canPropagate() === true) {
                 _target.dispatchEvent(event);
+            }
+        };
+        
+        /**
+         * Dispatches all queued events that are waiting for {@link type}.
+         * 
+         * @param {String} type - The Event type.
+         * @private
+         */
+        this._dispatchQueuedEvents = function (type) {
+            if (_queuedEvents.hasOwnProperty(type)) {
+                if (_queuedEvents.hasOwnProperty(type)) {
+                    /**
+                     * @type {jsEventDispatcher.Event}
+                     */
+                    var event;
+
+                    /**
+                     * @type {jsEventDispatcher.Event[]}
+                     */
+                    var eventsToDispatch = _queuedEvents[type].slice(0);
+                    delete _queuedEvents[type];
+
+                    while ((event = eventsToDispatch.pop())) {
+                        this.dispatchEvent(event);
+                    }
+                }
             }
         };
 
@@ -135,6 +184,20 @@
 
             return false;
         };
+        
+        /**
+         * Defer event dispatching until {@link trigger} event type occurs.
+         *
+         * @param {String} trigger - Triggering event type.
+         * @param {jsEventDispatcher.Event} event - The Event object that will be dispatched into the event flow.
+         */
+        this.queueEventDispatch = function (trigger, event) {
+            if (!_queuedEvents.hasOwnProperty(trigger)) {
+                _queuedEvents[trigger] = [];
+            }
+
+            _queuedEvents[trigger].push(event);
+        };        
 
         /**
          * Removes a listener from the EventDispatcher object. If there is no matching

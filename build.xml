@@ -36,7 +36,7 @@
         </propertyfile>
 
         <jscomp compilationLevel="whitespace" warning="verbose"
-                debug="false" output="${build}/jsEventDispatcher-${version.major}.${version.minor}.${version.build}.js">
+                debug="false" output="${build}/jsEventDispatcher-${version.major}.${version.minor}.js">
 
           <sources dir="${build}">
             <file name="jsEventDispatcher-${touch.time}.js"/>
@@ -49,10 +49,10 @@
         <mkdir dir="${dist}"/>
 
         <jscomp compilationLevel="simple" warning="verbose"
-                debug="false" output="${dist}/jsEventDispatcher-${version.major}.${version.minor}.${version.build}.js">
+                debug="false" output="${dist}/jsEventDispatcher-${version.major}.${version.minor}.js">
 
           <sources dir="${build}">
-            <file name="jsEventDispatcher-${version.major}.${version.minor}.${version.build}.js"/>
+            <file name="jsEventDispatcher-${version.major}.${version.minor}.js"/>
           </sources>
 
         </jscomp>

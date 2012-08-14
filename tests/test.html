@@ -24,9 +24,9 @@
             console.log(new Date().getTime(), 'B', event.getTimestamp());
         });
         
-        test.dispatcher.deferEventDispatch(new jsEventDispatcher.Event('say', window), 4000);
-
         test.dispatcher.dispatchEvent(new jsEventDispatcher.Event('say', window, true));
+        test.dispatcher.queueEventDispatch('say', new jsEventDispatcher.Event('say', window));
+        test.dispatcher.deferEventDispatch(new jsEventDispatcher.Event('say', window), 4000);
     </script>
 </head>
 <body>
